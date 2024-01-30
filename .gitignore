@@ -1,5 +1,6 @@
 # .gitignore
 .env
+connexion_db.py
 /.idea/.gitignore
 /.idea/sonarlint/issuestore/0/c/0c801763fca08c0b5de1cab25ab0be469c9962bf
 /.idea/sonarlint/securityhotspotstore/0/c/0c801763fca08c0b5de1cab25ab0be469c9962bf
