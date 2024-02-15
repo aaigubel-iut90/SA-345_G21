@@ -6,7 +6,7 @@ from random import random
 
 from flask import Blueprint
 from flask import request, render_template, redirect, flash
-#from werkzeug.utils import secure_filename
+# from werkzeug.utils import secure_filename
 
 from connexion_db import get_db
 
@@ -28,16 +28,16 @@ def show_article():
 @admin_article.route('/admin/article/add', methods=['GET'])
 def add_article():
     mycursor = get_db().cursor()
-    sql='''
+    sql = '''
     SELECT * FROM type_ski
     '''
     mycursor.execute(sql)
     type_article = mycursor.fetchall()
     return render_template('admin/article/add_article.html'
-                           ,types_article=type_article
-                           #,couleurs=colors
-                           #,tailles=tailles
-                            )
+                           , types_article=type_article
+                           # ,couleurs=colors
+                           # ,tailles=tailles
+                           )
 
 
 @admin_article.route('/admin/article/add', methods=['POST'])
@@ -54,11 +54,11 @@ def valid_add_article():
     image = request.files.get('image', '')
 
     if image:
-        filename = 'img_upload'+ str(int(2147483647 * random())) + '.png'
+        filename = 'img_upload' + str(int(2147483647 * random())) + '.png'
         image.save(os.path.join('static/images/', filename))
     else:
         print("erreur")
-        filename=None
+        filename = None
 
     tuple_test = (nom_ski, type_ski_id, largeur, prix_ski, fournisseur, marque, conseil_utilisation, image)
 
@@ -82,13 +82,13 @@ def valid_add_article():
 
 @admin_article.route('/admin/article/delete', methods=['GET'])
 def delete_article():
-    id_ski=request.args.get('id_ski')
+    id_ski = request.args.get('id_ski')
     mycursor = get_db().cursor()
     sql = '''DELETE FROM ski WHERE id_ski=%s'''
     mycursor.execute(sql, id_ski)
     nb_declinaison = mycursor.fetchone()
     if nb_declinaison['nb_declinaison'] > 0:
-        message= u'il y a des declinaisons pour ce ski : vous ne pouvez pas le supprimer'
+        message = u'il y a des declinaisons pour ce ski : vous ne pouvez pas le supprimer'
         flash(message, 'alert-warning')
     else:
         sql = ''' DELETE FROM ski WHERE id_ski=%s'''
@@ -111,16 +111,20 @@ def delete_article():
 
 @admin_article.route('/admin/article/edit', methods=['GET'])
 def edit_article():
-    id_article=request.args.get('id_ski')
+    id_article = request.args.get('id_article')
     mycursor = get_db().cursor()
     sql = '''
-        
+        SELECT *
+        FROM ski
+        WHERE id_ski = %s;
     '''
-    mycursor.execute(sql, id_article)
+    tuple_id = (id_article, )
+    mycursor.execute(sql, tuple_id)
     article = mycursor.fetchone()
     print(article)
     sql = '''
-    requête admin_article_7
+        SELECT *
+        FROM type_ski
     '''
     mycursor.execute(sql)
     types_article = mycursor.fetchall()
@@ -132,9 +136,9 @@ def edit_article():
     # declinaisons_article = mycursor.fetchall()
 
     return render_template('admin/article/edit_article.html'
-                           ,article=article
-                           ,types_article=types_article
-                         #  ,declinaisons_article=declinaisons_article
+                           , article=article
+                           , types_article=types_article
+                           #  ,declinaisons_article=declinaisons_article
                            )
 
 
@@ -169,20 +173,15 @@ def valid_edit_article():
     get_db().commit()
     if image_nom is None:
         image_nom = ''
-    message = u'article modifié , nom:' + nom + '- type_article :' + type_article_id + ' - prix:' + prix  + ' - image:' + image_nom + ' - description: ' + description
+    message = u'article modifié , nom:' + nom + '- type_article :' + type_article_id + ' - prix:' + prix + ' - image:' + image_nom + ' - description: ' + description
     flash(message, 'alert-success')
     return redirect('/admin/article/show')
-
-
-
-
-
 
 
 @admin_article.route('/admin/article/avis/<int:id>', methods=['GET'])
 def admin_avis(id):
     mycursor = get_db().cursor()
-    article=[]
+    article = []
     commentaires = {}
     return render_template('admin/article/show_avis.html'
                            , article=article
