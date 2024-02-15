@@ -13,8 +13,14 @@
                 <label for="nom">Nom :
                     <input name="nom" type="text" value=""  class="form-control" required>
                 </label>
+                <label for="largeur">Largeur :
+                    <input name="largeur" type="text" value=""  class="form-control" required>
+                </label>
                 <label for="prix">Prix (€) :
                     <input name="prix" type="number" min="0.0" step="0.01" max="2147483647" value=""  class="form-control" required>
+                </label>
+                <label for="fournisseur">Fournisseur :
+                    <input name="fournisseur" type="text" value=""  class="form-control" required>
                 </label>
                 <label for="image"> Image :
                     <input name="image" type="file" onchange="loadFile(event)"   class="form-control">
@@ -24,7 +30,7 @@
                     <select name="type_article_id" required class="form-select">
                         <option value="">Sélectionner un type d'article</option>
                         {% for type in types_article %}
-                             <option value="{{ type.id_type_article }}"> {{ type.libelle }}</option>
+                             <option value="{{ type.id_type_ski }}"> {{ type.libelle_type_ski }}</option>
                         {% endfor %}
                     </select>
                 </label>
