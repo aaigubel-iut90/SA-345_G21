@@ -82,30 +82,42 @@ def valid_add_article():
 
 @admin_article.route('/admin/article/delete', methods=['GET'])
 def delete_article():
-    id_ski = request.args.get('id_ski')
+    id_article = request.args.get('id_article')
+    print(id_article)
     mycursor = get_db().cursor()
-    sql = '''DELETE FROM ski WHERE id_ski=%s'''
-    mycursor.execute(sql, id_ski)
+    sql = ''' SELECT nb_declinaison
+     FROM ski
+     WHERE id_ski = %s'''
+    mycursor.execute(sql, id_article)
     nb_declinaison = mycursor.fetchone()
+    print(nb_declinaison)
     if nb_declinaison['nb_declinaison'] > 0:
-        message = u'il y a des declinaisons pour ce ski : vous ne pouvez pas le supprimer'
+        message = u'il y a des declinaisons dans cet article : vous ne pouvez pas le supprimer'
         flash(message, 'alert-warning')
     else:
-        sql = ''' DELETE FROM ski WHERE id_ski=%s'''
-        mycursor.execute(sql, id_ski)
+        sql = '''
+        SELECT image
+        FROM ski
+        WHERE id_ski = %s
+        '''
+        mycursor.execute(sql, id_article)
         article = mycursor.fetchone()
-        print("ski")
+        print(article)
         image = article['image']
 
-        sql = ''' DELETE FROM article WHERE id_ski=%s'''
-        mycursor.execute(sql, id_ski)
+        sql = '''
+            DELETE FROM ski
+            WHERE id_ski = %s
+            '''
+        mycursor.execute(sql, id_article)
         get_db().commit()
         if image != None:
             os.remove('static/images/' + image)
 
-        print("un ski supprimé, id :", id_ski)
-        message = u'un article supprimé, id : ' + id_ski
+        print("un article supprimé, id :", id_article)
+        message = u'un article supprimé, id : ' + id_article
         flash(message, 'alert-success')
+
     return redirect('/admin/article/show')
 
 
@@ -118,7 +130,7 @@ def edit_article():
         FROM ski
         WHERE id_ski = %s;
     '''
-    tuple_id = (id_article, )
+    tuple_id = (id_article,)
     mycursor.execute(sql, tuple_id)
     article = mycursor.fetchone()
     print(article)
@@ -145,14 +157,20 @@ def edit_article():
 @admin_article.route('/admin/article/edit', methods=['POST'])
 def valid_edit_article():
     mycursor = get_db().cursor()
-    nom = request.form.get('nom')
-    id_article = request.form.get('id_article')
-    image = request.files.get('image', '')
+    nom = request.form.get('nom', '')
+    id_article = request.form.get('id_article', '')
+    largeur = request.form.get('largeur', '')
+    image = request.form.get('image', '')
     type_article_id = request.form.get('type_article_id', '')
     prix = request.form.get('prix', '')
-    description = request.form.get('description')
+    fournisseur = request.form.get('fournisseur', '')
+    marque = request.form.get('marque', '')
+    description = request.form.get('conseil_utilisation', '')
+    print("test", id_article)
     sql = '''
-       requête admin_article_8
+       SELECT *
+       FROM ski
+       WHERE id_ski = %s;
        '''
     mycursor.execute(sql, id_article)
     image_nom = mycursor.fetchone()
@@ -167,8 +185,12 @@ def valid_edit_article():
             image.save(os.path.join('static/images/', filename))
             image_nom = filename
 
-    sql = '''  requête admin_article_9 '''
-    mycursor.execute(sql, (nom, image_nom, prix, type_article_id, description, id_article))
+    sql = '''
+    UPDATE ski
+    SET nom_ski = %s, largeur = %s, prix_ski = %s, type_ski_id = %s, fournisseur = %s, marque = %s, conseil_utilisation = %s, image = %s
+    WHERE id_ski = %s
+    '''
+    mycursor.execute(sql, (nom, largeur, prix, type_article_id, fournisseur, marque, description, image, id_article))
 
     get_db().commit()
     if image_nom is None:
