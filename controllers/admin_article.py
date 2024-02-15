@@ -34,7 +34,7 @@ def add_article():
     mycursor.execute(sql)
     type_article = mycursor.fetchall()
     return render_template('admin/article/add_article.html'
-                           ,types_article=type_article,
+                           ,types_article=type_article
                            #,couleurs=colors
                            #,tailles=tailles
                             )
