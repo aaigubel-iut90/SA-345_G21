@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS ligne_panier, ligne_commande, commande, etat, ski, type_ski, longueur, utilisateur;
+DROP TABLE IF EXISTS adresse, ligne_panier, ligne_commande, commande, etat, ski, type_ski, longueur, utilisateur;
 
 
 CREATE TABLE IF NOT EXISTS utilisateur
@@ -11,6 +11,20 @@ CREATE TABLE IF NOT EXISTS utilisateur
     nom            VARCHAR(255),
     email          VARCHAR(255),
     PRIMARY KEY (id_utilisateur)
+);
+
+CREATE TABLE IF NOT EXISTS adresse
+(
+    id_adresse       INT AUTO_INCREMENT,
+    nom              VARCHAR(255),
+    rue              VARCHAR(255),
+    code_postal      INT(5),
+    ville            VARCHAR(255),
+    date_utilisation DATE,
+    valide           INT DEFAULT (1),
+    utilisateur_id   INT,
+    PRIMARY KEY (id_adresse),
+    FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur)
 );
 
 CREATE TABLE IF NOT EXISTS longueur
@@ -39,6 +53,7 @@ CREATE TABLE IF NOT EXISTS ski
     marque              VARCHAR(50),
     conseil_utilisation TEXT,
     image               VARCHAR(255),
+    stock               INT DEFAULT 10,
     PRIMARY KEY (id_ski),
     FOREIGN KEY (longueur_id) REFERENCES longueur (id_longueur),
     FOREIGN KEY (type_ski_id) REFERENCES type_ski (id_type_ski)
@@ -52,18 +67,27 @@ CREATE TABLE IF NOT EXISTS etat
 
 CREATE TABLE IF NOT EXISTS commande
 (
-    id_commande    INT PRIMARY KEY,
+    id_commande    INT AUTO_INCREMENT,
+    nbr_articles   INT,
+    prix_total     INT DEFAULT 10,
     date_achat     DATE NOT NULL,
     utilisateur_id INT,
     etat_id        INT,
+    libelle        VARCHAR(255),
+    adresse        INT,
+    adresse_1      INT,
+    PRIMARY KEY (id_commande),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur),
-    FOREIGN KEY (etat_id) REFERENCES etat (id_etat)
+    FOREIGN KEY (etat_id) REFERENCES etat (id_etat),
+    FOREIGN KEY (adresse) REFERENCES adresse (id_adresse),
+    FOREIGN KEY (adresse_1) REFERENCES adresse (id_adresse)
 );
 
 CREATE TABLE IF NOT EXISTS ligne_commande
 (
     commande_id INT,
     id_ski      INT,
+    nom_ski     VARCHAR(255),
     prix        DECIMAL(10, 2) NOT NULL,
     quantite    INT            NOT NULL,
     PRIMARY KEY (commande_id, id_ski),
@@ -75,7 +99,9 @@ CREATE TABLE IF NOT EXISTS ligne_panier
 (
     utilisateur_id INT,
     id_ski         INT,
+    nom_ski        VARCHAR(255),
     quantite       INT  NOT NULL,
+    prix           INT,
     date_ajout     DATE NOT NULL,
     PRIMARY KEY (utilisateur_id, id_ski),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur),
@@ -91,7 +117,13 @@ VALUES (1, 'admin', 'admin@admin.fr',
         'ROLE_client', 'client', '1'),
        (3, 'client2', 'client2@client2.fr',
         'sha256$MjhdGuDELhI82lKY$2161be4a68a9f236a27781a7f981a531d11fdc50e4112d912a7754de2dfa0422',
-        'ROLE_client', 'client2', '1');
+        'ROLE_client', 'client2', '1'),
+       (4, 'client3', 'client3@client3.fr',
+        'pbkdf2:sha256:600000$n46npRmHdO9ALhKP$acc390e68dd20843de56bfd3294511e901c24f83b6696806812533f90a6fb1d0',
+        'ROLE_client', 'client3', '1'),
+       (5, 'admin2', 'admin2@admin2.fr',
+        'pbkdf2:sha256:600000$YN98r1YDgUaqGPxQ$9a53603fb4102114e0369be15e6f50b754ab886045d97ab213d7bfa9b1beea86',
+        'ROLE_admin', 'admin2', '1');
 
 INSERT INTO etat(id_etat, libelle)
 VALUES (1, 'en attente'),
@@ -169,3 +201,6 @@ VALUES (1, 'S/RACE GS 12 (and X12)', 68, 950, 6, 7, 'Mountain Gear', 'Salomon',
        (15, 'RANGER 116 - BIG STIX ', 112, 850, 8, 6, 'Speed Racer', 'Fischer',
         'Le Ranger 116 est notre vision du Big Mountain moderne et répond aux exigences de tous les freeriders qui ne jurent que par les superlatifs. Les détails techniques et les matériaux robustes de ce ski ont été conçus pour répondre aux exigences des meilleurs freeriders d''aujourd''hui. ',
         'ranger_116.png');
+
+INSERT INTO adresse(id_adresse, nom, rue, code_postal, ville, date_utilisation, valide, utilisateur_id)
+VALUES (1, 'le curée', '7 rue de l\'inexistence', 90000, 'Belfort', DATE(NOW()), 1, 4);

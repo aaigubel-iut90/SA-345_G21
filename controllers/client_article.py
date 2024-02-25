@@ -29,8 +29,10 @@ def client_article_show():                                 # remplace client_ind
     mycursor.execute(sql)
     types_article = mycursor.fetchall()
 
-
-    articles_panier = []
+    sql = '''SELECT * FROM ligne_panier
+    WHERE utilisateur_id = %s'''
+    mycursor.execute(sql, (id_client,))
+    articles_panier = mycursor.fetchall()
 
     if len(articles_panier) >= 1:
         sql = ''' calcul du prix total du panier '''
@@ -40,6 +42,6 @@ def client_article_show():                                 # remplace client_ind
     return render_template('client/boutique/panier_article.html'
                            , articles=articles
                            , articles_panier=articles_panier
-                           #, prix_total=prix_total
+                           , prix_total=prix_total
                            , items_filtre=types_article
                            )
