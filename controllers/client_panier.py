@@ -16,14 +16,15 @@ def client_panier_add():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     id_article = request.form.get('id_article')
-    quantite = request.form.get('quantite')
+    quantite = int(request.form.get('quantite'))
     mycursor = get_db().cursor()
     # Récupérer le nom et le prix associés à l'id_ski
-    sql = '''SELECT nom_ski, prix_ski FROM ski WHERE id_ski = %s'''
+    sql = '''SELECT nom_ski, prix_ski, stock FROM ski WHERE id_ski = %s'''
     mycursor.execute(sql, (id_article,))
     article_info = mycursor.fetchone()
     nom_ski = article_info['nom_ski']
     prix_ski = article_info['prix_ski']
+    stock_ski = article_info['stock']
 
     sql_check = '''SELECT * FROM ligne_panier WHERE utilisateur_id = %s AND id_ski = %s'''
     mycursor.execute(sql_check, (id_client, id_article,))
@@ -31,14 +32,18 @@ def client_panier_add():
 
     if existing_item:
         # Si l'article est déjà dans le panier, mettre à jour la quantité
-        new_quantite = existing_item['quantite'] + 1
+        new_quantite = existing_item['quantite'] + quantite
         sql = '''UPDATE ligne_panier SET quantite = %s WHERE utilisateur_id = %s AND id_ski = %s'''
         mycursor.execute(sql, (new_quantite, id_client, id_article,))
+        sql2 = '''UPDATE ski SET stock = stock - %s WHERE id_ski = %s'''
+        mycursor.execute(sql2, (quantite, id_article))
         get_db().commit()
     else:
         sql = '''INSERT INTO ligne_panier(utilisateur_id, id_ski, nom_ski, quantite, prix, date_ajout)
                  VALUES (%s, %s, %s, %s, %s, NOW())'''
         mycursor.execute(sql, (id_client, id_article, nom_ski, quantite, prix_ski))
+        sql2 = '''UPDATE ski SET stock = stock - %s WHERE id_ski = %s'''
+        mycursor.execute(sql2, (quantite, id_article))
         get_db().commit()
 
     # ---------
@@ -81,10 +86,14 @@ def client_panier_delete():
     if new_quantite > 0:
         sql = '''UPDATE ligne_panier SET quantite = %s WHERE id_ski = %s AND utilisateur_id = %s'''
         mycursor.execute(sql, (new_quantite, id_article, id_client,))
+        sql2 = '''UPDATE ski SET stock = stock + 1 WHERE id_ski = %s'''
+        mycursor.execute(sql2, (id_article,))
         get_db().commit()
     else:
         sql = '''DELETE FROM ligne_panier WHERE id_ski = %s AND utilisateur_id = %s'''
         mycursor.execute(sql, (id_article, id_client,))
+        sql2 = '''UPDATE ski SET stock = stock + 1 WHERE id_ski = %s'''
+        mycursor.execute(sql2, (id_article,))
         get_db().commit()
 
 
@@ -113,7 +122,14 @@ def client_panier_vider():
     mycursor.execute(sql, (client_id,))
     items_panier = []
     items_panier = mycursor.fetchall()
+
     for item in items_panier:
+        quantite_article = item['quantite']
+
+        # Mettre à jour le stock de l'article dans la table des articles
+        sql_update_stock = '''UPDATE ski SET stock = stock + %s WHERE id_ski = %s'''
+        mycursor.execute(sql_update_stock, (quantite_article, item['id_ski']))
+
         sql_delete = '''DELETE FROM ligne_panier WHERE utilisateur_id = %s AND id_ski = %s'''
         mycursor.execute(sql_delete, (client_id, item['id_ski']))
         # sql2 = ''' mise à jour du stock de l'article : stock = stock + qté de la ligne pour l'article'''
