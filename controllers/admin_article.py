@@ -60,7 +60,7 @@ def valid_add_article():
         print("erreur")
         filename = None
 
-    tuple_test = (nom_ski, type_ski_id, largeur, prix_ski, fournisseur, marque, conseil_utilisation, image)
+    tuple_test = (nom_ski, type_ski_id, largeur, prix_ski, fournisseur, marque, conseil_utilisation, filename)
 
     sql = '''
     INSERT INTO ski (nom_ski, type_ski_id, largeur, prix_ski, fournisseur, marque, conseil_utilisation, image)
