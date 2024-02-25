@@ -73,6 +73,31 @@ VALUES ('le curée', '7 rue de l inexistence', 90000, 'Belfort', DATE(NOW()), 1,
 ;'''
     mycursor.execute(sql)
 
+    sql = '''
+        CREATE TABLE IF NOT EXISTS longueur
+    (
+        id_longueur      INT AUTO_INCREMENT,
+        libelle_longueur VARCHAR(50),
+        PRIMARY KEY (id_longueur)
+    );
+        '''
+    mycursor.execute(sql)
+
+    sql = '''
+        INSERT INTO longueur(id_longueur, libelle_longueur)
+    VALUES (1, '150'),
+           (2, '155'),
+           (3, '160'),
+           (4, '165'),
+           (5, '170'),
+           (6, '175'),
+           (7, '180'),
+           (8, '185'),
+           (9, '190'),
+           (10, '195');
+        '''
+    mycursor.execute(sql)
+
     sql = ''' 
     CREATE TABLE IF NOT EXISTS type_ski
 (
@@ -82,6 +107,7 @@ VALUES ('le curée', '7 rue de l inexistence', 90000, 'Belfort', DATE(NOW()), 1,
 );  
     '''
     mycursor.execute(sql)
+
     sql = ''' 
 INSERT INTO type_ski(id_type_ski, libelle_type_ski)
 VALUES (1, 'ski_alpin'),
@@ -96,37 +122,13 @@ VALUES (1, 'ski_alpin'),
     '''
     mycursor.execute(sql)
 
-    sql = '''
-    CREATE TABLE IF NOT EXISTS longueur
-(
-    id_longueur      INT AUTO_INCREMENT,
-    libelle_longueur VARCHAR(50),
-    PRIMARY KEY (id_longueur)
-);
-    '''
-    mycursor.execute(sql)
-
-    sql = '''
-    INSERT INTO longueur(id_longueur, libelle_longueur)
-VALUES (1, '150'),
-       (2, '155'),
-       (3, '160'),
-       (4, '165'),
-       (5, '170'),
-       (6, '175'),
-       (7, '180'),
-       (8, '185'),
-       (9, '190'),
-       (10, '195');
-    '''
-    mycursor.execute(sql)
-
     sql = ''' 
     CREATE TABLE IF NOT EXISTS etat(
     id_etat INT PRIMARY KEY,
     libelle VARCHAR(50) NOT NULL
-)  DEFAULT CHARSET=utf8;  
+);  
     '''
+
     mycursor.execute(sql)
     sql = ''' 
     INSERT INTO etat(id_etat, libelle)
@@ -155,6 +157,7 @@ CREATE TABLE IF NOT EXISTS ski
 );
      '''
     mycursor.execute(sql)
+
     sql = ''' 
     INSERT INTO ski (id_ski, nom_ski, largeur, prix_ski, longueur_id, type_ski_id, fournisseur, marque, conseil_utilisation,
                  image)
@@ -225,6 +228,7 @@ CREATE TABLE IF NOT EXISTS commande
 );
      '''
     mycursor.execute(sql)
+
     sql = ''' 
 INSERT INTO commande(nbr_articles, prix_total, date_achat, utilisateur_id, etat_id, adresse, adresse_1)
 VALUES (4, 2810, DATE(NOW()), 3, 1, 1, 1),
@@ -253,6 +257,7 @@ CREATE TABLE IF NOT EXISTS ligne_commande
     FOREIGN KEY (id_ski) REFERENCES ski (id_ski)
 );
          '''
+
     mycursor.execute(sql)
     sql = ''' 
 INSERT INTO ligne_commande(commande_id, id_ski, nom_ski, prix, quantite)
