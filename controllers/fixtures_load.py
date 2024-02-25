@@ -226,7 +226,17 @@ CREATE TABLE IF NOT EXISTS commande
      '''
     mycursor.execute(sql)
     sql = ''' 
-#    INSERT INTO commande 
+INSERT INTO commande(nbr_articles, prix_total, date_achat, utilisateur_id, etat_id, adresse, adresse_1)
+VALUES (4, 2810, DATE(NOW()), 3, 1, 1, 1),
+       (3, 2350, DATE(NOW()), 2, 1, 2, 2),
+       (2, 2339.99, DATE(NOW()), 4, 1, 3, 3),
+       (3, 2519.97, DATE(NOW()), 3, 1, 1, 1),
+       (4, 3100, DATE(NOW()), 2, 1, 2, 2),
+       (3, 2400, DATE(NOW()), 4, 1, 3, 3),
+       (4, 3430, DATE(NOW()), 3, 1, 1, 1),
+       (4, 2810, DATE(NOW()), 2, 1, 2, 2),
+       (3, 2350, DATE(NOW()), 4, 1, 3, 3),
+       (2, 2339.99, DATE(NOW()), 3, 1, 1, 1);
                  '''
     mycursor.execute(sql)
 
@@ -245,7 +255,30 @@ CREATE TABLE IF NOT EXISTS ligne_commande
          '''
     mycursor.execute(sql)
     sql = ''' 
-#    INSERT INTO ligne_commande 
+INSERT INTO ligne_commande(commande_id, id_ski, nom_ski, prix, quantite)
+VALUES 
+    (1, 1, 'S/RACE GS 12 (and X12)', 950, 1),
+    (1, 2, 'MTN 86 CARBON', 630, 2),
+    (1, 3, 'S/MAX 8 (and M11)', 600, 1),
+    (2, 4, 'Skis racing unisexe HERO ELITE ST TI KONECT', 990, 1),
+    (2, 5, 'Skis de fond unisexe X-IUM SKATING PREMIUM + S3 STIFF', 680, 2),
+    (3, 6, 'Skis de randonnée hommes ESCAPER 97 NANO OPEN', 790, 1),
+    (3, 7, 'REDSTER X9 LUCI REVOSHOCK + X 16 VAR', 1549.99, 1),
+    (4, 8, 'MAVERICK 115 CTI', 859.99, 2),
+    (4, 9, 'BENT CHETLER 120', 799.99, 1),
+    (5, 10, 'KORE X 90 All Mountain Ski', 700, 3),
+    (5, 11, 'KORE 117 Freeride Ski', 1000, 1),
+    (6, 12, 'Oblivion 116 Freestyle Ski', 700, 2),
+    (6, 13, 'RC4 WORLDCUP SL MEN M-PLATE ', 1000, 1),
+    (7, 14, 'RC ONE 82 GT', 880, 1),
+    (7, 15, 'RANGER 116 - BIG STIX ', 850, 3),
+    (8, 1, 'S/RACE GS 12 (and X12)', 950, 1),
+    (8, 2, 'MTN 86 CARBON', 630, 2),
+    (8, 3, 'S/MAX 8 (and M11)', 600, 1),
+    (9, 4, 'Skis racing unisexe HERO ELITE ST TI KONECT', 990, 1),
+    (9, 5, 'Skis de fond unisexe X-IUM SKATING PREMIUM + S3 STIFF', 680, 2),
+    (10, 6, 'Skis de randonnée hommes ESCAPER 97 NANO OPEN', 790, 1),
+    (10, 7, 'REDSTER X9 LUCI REVOSHOCK + X 16 VAR', 1549.99, 1);
          '''
     mycursor.execute(sql)
 
