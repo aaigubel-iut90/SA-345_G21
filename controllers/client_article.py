@@ -6,11 +6,12 @@ from flask import Flask, request, render_template, redirect, abort, flash, sessi
 from connexion_db import get_db
 
 client_article = Blueprint('client_article', __name__,
-                        template_folder='templates')
+                           template_folder='templates')
+
 
 @client_article.route('/client/index')
-@client_article.route('/client/article/show')              # remplace /client
-def client_article_show():                                 # remplace client_index
+@client_article.route('/client/article/show')  # remplace /client
+def client_article_show():  # remplace client_index
     mycursor = get_db().cursor()
     id_client = session['id_user']
 
@@ -19,8 +20,8 @@ def client_article_show():                                 # remplace client_ind
     list_param = []
     condition_and = ""
     # utilisation du filtre
-    sql3=''' prise en compte des commentaires et des notes dans le SQL    '''
-    articles =[]
+    sql3 = ''' prise en compte des commentaires et des notes dans le SQL    '''
+    articles = []
     mycursor.execute(sql)
     articles = mycursor.fetchall()
     # pour le filtre
