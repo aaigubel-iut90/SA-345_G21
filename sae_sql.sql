@@ -199,7 +199,7 @@ VALUES (1, 'S/RACE GS 12 (and X12)', 68, 950, 6, 7, 'Mountain Gear', 'Salomon',
         'img_upload_391273157.png'),
        (15, 'RANGER 116 - BIG STIX ', 112, 850, 8, 6, 'Speed Racer', 'Fischer',
         'Le Ranger 116 est notre vision du Big Mountain moderne et répond aux exigences de tous les freeriders qui ne jurent que par les superlatifs. Les détails techniques et les matériaux robustes de ce ski ont été conçus pour répondre aux exigences des meilleurs freeriders d''aujourd''hui. ',
-        'img_upload_423205362.png');
+        'img_upload_1068978541.png');
 
 INSERT INTO adresse(id_adresse, nom, rue, code_postal, ville, date_utilisation, valide, utilisateur_id)
 VALUES (1, 'le curée', '7 rue de l\'inexistence', 90000, 'Belfort', DATE(NOW()), 1, 4),
