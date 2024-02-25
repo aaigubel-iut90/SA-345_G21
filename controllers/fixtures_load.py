@@ -12,12 +12,13 @@ fixtures_load = Blueprint('fixtures_load', __name__,
 @fixtures_load.route('/base/init')
 def fct_fixtures_load():
     mycursor = get_db().cursor()
-    sql = '''DROP TABLE IF EXISTS
-    ligne_panier, ligne_commande, commande, etat, ski, type_ski, longueur, utilisateur;'''
+    sql = '''DROP TABLE IF EXISTS adresse, ligne_panier, ligne_commande, commande, etat, ski, type_ski, longueur,
+    utilisateur;'''
 
     mycursor.execute(sql)
     sql = '''
-    CREATE TABLE utilisateur(
+    CREATE TABLE IF NOT EXISTS utilisateur
+    (
         id_utilisateur INT AUTO_INCREMENT,
         login          VARCHAR(255),
         password       VARCHAR(255),
@@ -26,33 +27,56 @@ def fct_fixtures_load():
         nom            VARCHAR(255),
         email          VARCHAR(255),
         PRIMARY KEY (id_utilisateur)
-    )  DEFAULT CHARSET utf8;  
+    );
     '''
     mycursor.execute(sql)
     sql = ''' 
     INSERT INTO utilisateur(id_utilisateur, login, email, password, role, nom, est_actif)
     VALUES (1, 'admin', 'admin@admin.fr',
-    'sha256$dPL3oH9ug1wjJqva$2b341da75a4257607c841eb0dbbacb76e780f4015f0499bb1a164de2a893fdbf',
-    'ROLE_admin', 'admin', '1'),
-    (2, 'client', 'client@client.fr',
-    'sha256$1GAmexw1DkXqlTKK$31d359e9adeea1154f24491edaa55000ee248f290b49b7420ced542c1bf4cf7d',
-    'ROLE_client', 'client', '1'),
-    (3, 'client2', 'client2@client2.fr',
-    'sha256$MjhdGuDELhI82lKY$2161be4a68a9f236a27781a7f981a531d11fdc50e4112d912a7754de2dfa0422',
-    'ROLE_client', 'client2', '1');
+        'sha256$dPL3oH9ug1wjJqva$2b341da75a4257607c841eb0dbbacb76e780f4015f0499bb1a164de2a893fdbf',
+        'ROLE_admin', 'admin', '1'),
+       (2, 'client', 'client@client.fr',
+        'sha256$1GAmexw1DkXqlTKK$31d359e9adeea1154f24491edaa55000ee248f290b49b7420ced542c1bf4cf7d',
+        'ROLE_client', 'client', '1'),
+       (3, 'client2', 'client2@client2.fr',
+        'sha256$MjhdGuDELhI82lKY$2161be4a68a9f236a27781a7f981a531d11fdc50e4112d912a7754de2dfa0422',
+        'ROLE_client', 'client2', '1'),
+       (4, 'client3', 'client3@client3.fr',
+        'pbkdf2:sha256:600000$n46npRmHdO9ALhKP$acc390e68dd20843de56bfd3294511e901c24f83b6696806812533f90a6fb1d0',
+        'ROLE_client', 'client3', '1'),
+       (5, 'admin2', 'admin2@admin2.fr',
+        'pbkdf2:sha256:600000$YN98r1YDgUaqGPxQ$9a53603fb4102114e0369be15e6f50b754ab886045d97ab213d7bfa9b1beea86',
+        'ROLE_admin', 'admin2', '1');
     '''
     mycursor.execute(sql)
 
+    sql = '''
+    CREATE TABLE IF NOT EXISTS adresse
+(
+    id_adresse       INT AUTO_INCREMENT,
+    nom              VARCHAR(255),
+    rue              VARCHAR(255),
+    code_postal      INT(5),
+    ville            VARCHAR(255),
+    date_utilisation DATE,
+    valide           INT DEFAULT (1),
+    utilisateur_id   INT,
+    PRIMARY KEY (id_adresse),
+    FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur)
+);'''
+    mycursor.execute(sql)
+
     sql = ''' 
-    CREATE TABLE type_ski(
+    CREATE TABLE IF NOT EXISTS type_ski
+(
     id_type_ski      INT AUTO_INCREMENT,
     libelle_type_ski VARCHAR(50),
     PRIMARY KEY (id_type_ski)
-    )  DEFAULT CHARSET utf8;  
+);  
     '''
     mycursor.execute(sql)
     sql = ''' 
-    INSERT INTO type_ski(id_type_ski, libelle_type_ski)
+INSERT INTO type_ski(id_type_ski, libelle_type_ski)
 VALUES (1, 'ski_alpin'),
        (2, 'ski_de_fond'),
        (3, 'ski_de_randonnee'),
@@ -100,14 +124,12 @@ VALUES (1, '150'),
     sql = ''' 
     INSERT INTO etat(id_etat, libelle)
 VALUES (1, 'en attente'),
-       (2, 'expédié'),
-       (3, 'validé'),
-       (4, 'confirmé');
+       (2, 'expédié')
      '''
     mycursor.execute(sql)
 
     sql = ''' 
-    CREATE TABLE IF NOT EXISTS ski
+CREATE TABLE IF NOT EXISTS ski
 (
     id_ski              INT AUTO_INCREMENT,
     nom_ski             VARCHAR(100),
@@ -119,10 +141,11 @@ VALUES (1, 'en attente'),
     marque              VARCHAR(50),
     conseil_utilisation TEXT,
     image               VARCHAR(255),
+    stock               INT DEFAULT 10,
     PRIMARY KEY (id_ski),
     FOREIGN KEY (longueur_id) REFERENCES longueur (id_longueur),
     FOREIGN KEY (type_ski_id) REFERENCES type_ski (id_type_ski)
-) 
+);
      '''
     mycursor.execute(sql)
     sql = ''' 
@@ -177,15 +200,22 @@ VALUES (1, 'S/RACE GS 12 (and X12)', 68, 950, 6, 7, 'Mountain Gear', 'Salomon',
     mycursor.execute(sql)
 
     sql = ''' 
-    CREATE TABLE IF NOT EXISTS commande
+CREATE TABLE IF NOT EXISTS commande
 (
-    id_commande    INT PRIMARY KEY,
+    id_commande    INT AUTO_INCREMENT,
+    nbr_articles   INT,
+    prix_total     INT DEFAULT 10,
     date_achat     DATE NOT NULL,
     utilisateur_id INT,
     etat_id        INT,
+    adresse        INT,
+    adresse_1      INT,
+    PRIMARY KEY (id_commande),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur),
-    FOREIGN KEY (etat_id) REFERENCES etat (id_etat)
-) DEFAULT CHARSET=utf8;  
+    FOREIGN KEY (etat_id) REFERENCES etat (id_etat),
+    FOREIGN KEY (adresse) REFERENCES adresse (id_adresse),
+    FOREIGN KEY (adresse_1) REFERENCES adresse (id_adresse)
+);
      '''
     mycursor.execute(sql)
     sql = ''' 
@@ -194,10 +224,11 @@ VALUES (1, 'S/RACE GS 12 (and X12)', 68, 950, 6, 7, 'Mountain Gear', 'Salomon',
     mycursor.execute(sql)
 
     sql = ''' 
-    CREATE TABLE IF NOT EXISTS ligne_commande
+CREATE TABLE IF NOT EXISTS ligne_commande
 (
     commande_id INT,
     id_ski      INT,
+    nom_ski     VARCHAR(255),
     prix        DECIMAL(10, 2) NOT NULL,
     quantite    INT            NOT NULL,
     PRIMARY KEY (commande_id, id_ski),
@@ -212,16 +243,18 @@ VALUES (1, 'S/RACE GS 12 (and X12)', 68, 950, 6, 7, 'Mountain Gear', 'Salomon',
     mycursor.execute(sql)
 
     sql = ''' 
-    CREATE TABLE IF NOT EXISTS ligne_panier
+CREATE TABLE IF NOT EXISTS ligne_panier
 (
     utilisateur_id INT,
     id_ski         INT,
+    nom_ski        VARCHAR(255),
     quantite       INT  NOT NULL,
+    prix           INT,
     date_ajout     DATE NOT NULL,
     PRIMARY KEY (utilisateur_id, id_ski),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur),
     FOREIGN KEY (id_ski) REFERENCES ski (id_ski)
-);  
+);
          '''
     mycursor.execute(sql)
 
