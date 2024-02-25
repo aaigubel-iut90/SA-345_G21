@@ -45,7 +45,8 @@ def client_commande_add():
     mycursor = get_db().cursor()
 
     # choix de(s) (l')adresse(s)
-
+    id_adresse_livraison = request.form.get('id_adresse_livraison')
+    id_adresse_facturation = request.form.get('id_adresse_facturation')
     id_client = session['id_user']
     sql = '''SELECT * FROM ligne_panier WHERE utilisateur_id = %s'''
     mycursor.execute(sql, (id_client,))
@@ -68,9 +69,9 @@ def client_commande_add():
     result = mycursor.fetchone()
     prix_total = result['prix_total']
 
-    sql = '''INSERT INTO commande(date_achat, utilisateur_id, etat_id, nbr_articles, prix_total)
-    VALUES (DATE(NOW()), %s, %s, %s, %s)'''
-    mycursor.execute(sql, (id_client, 1, nbr_articles, prix_total,))
+    sql = '''INSERT INTO commande(date_achat, utilisateur_id, etat_id, nbr_articles, prix_total, adresse, adresse_1)
+    VALUES (DATE(NOW()), %s, %s, %s, %s, %s, %s)'''
+    mycursor.execute(sql, (id_client, 1, nbr_articles, prix_total, id_adresse_livraison, id_adresse_facturation,))
 
     sql = '''SELECT LAST_INSERT_ID() AS last_insert_id'''
     mycursor.execute(sql)
@@ -94,7 +95,18 @@ def client_commande_add():
 def client_commande_show():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    sql = '''SELECT * FROM commande WHERE utilisateur_id = %s ORDER BY etat_id, date_achat DESC'''
+    sql = '''SELECT 
+        commande.*, 
+        etat.libelle AS libelle
+    FROM 
+        commande
+    LEFT JOIN 
+        etat ON commande.etat_id = etat.id_etat
+    WHERE 
+        commande.utilisateur_id = %s 
+    ORDER BY 
+        commande.etat_id, 
+        commande.date_achat DESC'''
     mycursor.execute(sql, (id_client,))
     commandes = []
     commandes = mycursor.fetchall()
@@ -109,7 +121,26 @@ def client_commande_show():
         articles_commande = mycursor.fetchall()
 
         # partie 2 : selection de l'adresse de livraison et de facturation de la commande selectionnée
-        sql_commande_adresses = '''SELECT * FROM adresse WHERE  = %s'''
+        sql_commande_adresses = '''
+        SELECT 
+        *,
+        a1.nom AS nom_livraison, 
+        a1.rue AS rue_livraison, 
+        a1.code_postal AS code_postal_livraison, 
+        a1.ville AS ville_livraison, 
+        a2.nom AS nom_facturation, 
+        a2.rue AS rue_facturation, 
+        a2.code_postal AS code_postal_facturation, 
+        a2.ville AS ville_facturation
+    FROM 
+        commande
+    LEFT JOIN 
+        adresse a1 ON commande.adresse = a1.id_adresse
+    LEFT JOIN 
+        adresse a2 ON commande.adresse_1 = a2.id_adresse
+    WHERE 
+        commande.id_commande = %s 
+        '''
         mycursor.execute(sql_commande_adresses, (id_commande,))
         commande_adresses = mycursor.fetchone()
 

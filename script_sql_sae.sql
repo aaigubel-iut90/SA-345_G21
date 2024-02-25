@@ -73,7 +73,6 @@ CREATE TABLE IF NOT EXISTS commande
     date_achat     DATE NOT NULL,
     utilisateur_id INT,
     etat_id        INT,
-    libelle        VARCHAR(255),
     adresse        INT,
     adresse_1      INT,
     PRIMARY KEY (id_commande),
