@@ -160,21 +160,23 @@ def valid_edit_article():
     nom = request.form.get('nom', '')
     id_article = request.form.get('id_article', '')
     largeur = request.form.get('largeur', '')
-    image = request.form.get('image', '')
+    image = request.files.get('image', '')
     type_article_id = request.form.get('type_article_id', '')
     prix = request.form.get('prix', '')
     fournisseur = request.form.get('fournisseur', '')
     marque = request.form.get('marque', '')
     description = request.form.get('conseil_utilisation', '')
+    stock = request.form.get('stock', '')
     print("test", id_article)
     sql = '''
-       SELECT *
+       SELECT image
        FROM ski
        WHERE id_ski = %s;
        '''
     mycursor.execute(sql, id_article)
     image_nom = mycursor.fetchone()
     image_nom = image_nom['image']
+    print(image_nom)
     if image:
         if image_nom != "" and image_nom is not None and os.path.exists(
                 os.path.join(os.getcwd() + "/static/images/", image_nom)):
@@ -187,10 +189,12 @@ def valid_edit_article():
 
     sql = '''
     UPDATE ski
-    SET nom_ski = %s, largeur = %s, prix_ski = %s, type_ski_id = %s, fournisseur = %s, marque = %s, conseil_utilisation = %s, image = %s
+    SET nom_ski = %s, largeur = %s, prix_ski = %s, type_ski_id = %s, fournisseur = %s, marque = %s,
+    conseil_utilisation = %s, image = %s, stock = %s
     WHERE id_ski = %s
     '''
-    mycursor.execute(sql, (nom, largeur, prix, type_article_id, fournisseur, marque, description, image, id_article))
+    mycursor.execute(sql, (nom, largeur, prix, type_article_id, fournisseur, marque, description, image_nom, stock,
+                           id_article,))
 
     get_db().commit()
     if image_nom is None:

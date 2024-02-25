@@ -202,7 +202,7 @@ VALUES (1, 'S/RACE GS 12 (and X12)', 68, 950, 6, 7, 'Mountain Gear', 'Salomon',
         'rc_one_82.png'),
        (15, 'RANGER 116 - BIG STIX ', 112, 850, 8, 6, 'Speed Racer', 'Fischer',
         'Le Ranger 116 est notre vision du Big Mountain moderne et répond aux exigences de tous les freeriders qui ne jurent que par les superlatifs. Les détails techniques et les matériaux robustes de ce ski ont été conçus pour répondre aux exigences des meilleurs freeriders d''aujourd''hui. ',
-        'ranger_116.png');
+        'no_photo.jpeg');
          '''
     mycursor.execute(sql)
 
