@@ -85,38 +85,38 @@ def delete_article():
     id_article = request.args.get('id_article')
     print(id_article)
     mycursor = get_db().cursor()
-    sql = ''' SELECT nb_declinaison
-     FROM ski
-     WHERE id_ski = %s'''
-    mycursor.execute(sql, id_article)
-    nb_declinaison = mycursor.fetchone()
-    print(nb_declinaison)
-    if nb_declinaison['nb_declinaison'] > 0:
-        message = u'il y a des declinaisons dans cet article : vous ne pouvez pas le supprimer'
-        flash(message, 'alert-warning')
-    else:
-        sql = '''
-        SELECT image
+    # sql = ''' SELECT nb_declinaison
+    # FROM ski
+    # WHERE id_ski = %s'''
+    # mycursor.execute(sql, id_article)
+    # nb_declinaison = mycursor.fetchone()
+    # print(nb_declinaison)
+    # if nb_declinaison['nb_declinaison'] > 0:
+    #     message = u'il y a des declinaisons dans cet article : vous ne pouvez pas le supprimer'
+    #     flash(message, 'alert-warning')
+    # else:
+    sql = '''
+        SELECT *
         FROM ski
         WHERE id_ski = %s
-        '''
-        mycursor.execute(sql, id_article)
-        article = mycursor.fetchone()
-        print(article)
-        image = article['image']
-
-        sql = '''
+    '''
+    mycursor.execute(sql, id_article)
+    article = mycursor.fetchone()
+    print(article)
+    image = article['image']
+    print(image)
+    sql = '''
             DELETE FROM ski
             WHERE id_ski = %s
             '''
-        mycursor.execute(sql, id_article)
-        get_db().commit()
-        if image != None:
-            os.remove('static/images/' + image)
+    mycursor.execute(sql, id_article)
+    get_db().commit()
+    if image != None:
+        os.remove('static/images/' + image)
 
-        print("un article supprimé, id :", id_article)
-        message = u'un article supprimé, id : ' + id_article
-        flash(message, 'alert-success')
+    print("un article supprimé, id :", id_article)
+    message = u'un article supprimé, id : ' + id_article
+    flash(message, 'alert-success')
 
     return redirect('/admin/article/show')
 
