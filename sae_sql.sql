@@ -208,15 +208,15 @@ VALUES (1, 'le curée', '7 rue de l\'inexistence', 90000, 'Belfort', DATE(NOW())
 
 INSERT INTO commande(nbr_articles, prix_total, date_achat, utilisateur_id, etat_id, adresse, adresse_1)
 VALUES (4, 2810, DATE(NOW()), 3, 1, 1, 1),
-       (3, 2350, DATE(NOW()), 2, 1, 2, 2),
+       (3, 2350, DATE(NOW()), 2, 2, 2, 2),
        (2, 2339.99, DATE(NOW()), 4, 1, 3, 3),
-       (3, 2519.97, DATE(NOW()), 3, 1, 1, 1),
+       (3, 2519.97, DATE(NOW()), 3, 2, 1, 1),
        (4, 3100, DATE(NOW()), 2, 1, 2, 2),
-       (3, 2400, DATE(NOW()), 4, 1, 3, 3),
+       (3, 2400, DATE(NOW()), 4, 2, 3, 3),
        (4, 3430, DATE(NOW()), 3, 1, 1, 1),
-       (4, 2810, DATE(NOW()), 2, 1, 2, 2),
+       (4, 2810, DATE(NOW()), 2, 2, 2, 2),
        (3, 2350, DATE(NOW()), 4, 1, 3, 3),
-       (2, 2339.99, DATE(NOW()), 3, 1, 1, 1);
+       (2, 2339.99, DATE(NOW()), 3, 2, 1, 1);
 
 INSERT INTO ligne_commande(commande_id, id_ski, nom_ski, prix, quantite)
 VALUES (1, 1, 'S/RACE GS 12 (and X12)', 950, 1),
