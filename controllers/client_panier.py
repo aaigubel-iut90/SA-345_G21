@@ -148,11 +148,12 @@ def client_panier_delete_line():
     mycursor.execute(sql, (id_client, id_article))
     result = mycursor.fetchone()
     quantite = result['quantite']
+    print(quantite)
     sql2 = '''DELETE FROM ligne_panier
     WHERE (utilisateur_id = %s AND id_ski = %s)'''
     mycursor.execute(sql2, (id_client, id_article))
     sql3 = '''UPDATE ski SET stock = stock + %s WHERE id_ski = %s'''
-    mycursor.execute(sql2, (quantite, id_article,))
+    mycursor.execute(sql3, (quantite, id_article,))
     get_db().commit()
     return redirect('/client/article/show')
 
