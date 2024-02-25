@@ -66,6 +66,10 @@ def fct_fixtures_load():
 );'''
     mycursor.execute(sql)
 
+    sql = '''INSERT INTO adresse(id_adresse, nom, rue, code_postal, ville, date_utilisation, valide, utilisateur_id)
+VALUES (1, 'le curée', '7 rue de l inexistence', 90000, 'Belfort', DATE(NOW()), 1, 4);'''
+    mycursor.execute(sql)
+
     sql = ''' 
     CREATE TABLE IF NOT EXISTS type_ski
 (
