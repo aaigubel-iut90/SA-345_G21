@@ -202,4 +202,18 @@ VALUES (1, 'S/RACE GS 12 (and X12)', 68, 950, 6, 7, 'Mountain Gear', 'Salomon',
         'ranger_116.png');
 
 INSERT INTO adresse(id_adresse, nom, rue, code_postal, ville, date_utilisation, valide, utilisateur_id)
-VALUES (1, 'le curée', '7 rue de l\'inexistence', 90000, 'Belfort', DATE(NOW()), 1, 4);
+VALUES (1, 'le curée', '7 rue de l\'inexistence', 90000, 'Belfort', DATE(NOW()), 1, 4),
+       (2, 'DUPONT', '10 rue de la Liberté', 75001, 'Paris', DATE(NOW()), 1, 1),
+(3, 'DUBOIS', '25 avenue des Pins', 33000, 'Bordeaux', DATE(NOW()), 1, 2);
+
+INSERT INTO commande(nbr_articles, prix_total, date_achat, utilisateur_id, etat_id, adresse, adresse_1)
+VALUES (3, 250, DATE(NOW()), 1, 1, 1, 1),
+       (2, 180, DATE(NOW()), 2, 1, 2, 2),
+       (1, 80, DATE(NOW()), 4, 1, 3, 3),
+       (4, 320, DATE(NOW()), 1, 1, 1, 1),
+       (2, 150, DATE(NOW()), 2, 1, 2, 2),
+       (3, 200, DATE(NOW()), 4, 1, 3, 3),
+       (5, 400, DATE(NOW()), 1, 1, 1, 1),
+       (3, 190, DATE(NOW()), 2, 1, 2, 2),
+       (2, 100, DATE(NOW()), 4, 1, 3, 3),
+       (2, 120, DATE(NOW()), 1, 1, 1, 1);
